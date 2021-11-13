@@ -71,7 +71,7 @@ public protocol ImagePickerControllerProtocol: AnyObject {
 }
 
 /**
- CC图片/视频选择控制器协议
+ 图片/视频选择控制器协议实现
  */
 public extension ImagePickerControllerProtocol where Self: UIViewController {
     
