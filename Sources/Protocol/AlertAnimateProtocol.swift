@@ -21,9 +21,9 @@ public protocol AlertAnimateProtocol {
     var alertAnimateDuration: TimeInterval { get set }
     
     /// 提示动画透明层视图
-    var alertAnimateAlphaView: UIView { get set }
+    var alertAnimateAlphaView: UIView? { get set }
     /// 提示动画视图
-    var alertAnimateView: UIView { get set }
+    var alertAnimateView: UIView? { get set }
     
     /**
      显示
@@ -89,21 +89,21 @@ public extension AlertAnimateProtocol {
      */
     func show() {
         
-        alertAnimateAlphaView.alpha = alertAnimateAlpha
+        alertAnimateAlphaView?.alpha = alertAnimateAlpha
         
         switch alertAnimateType {
             
         case .scale:
             
-            alertAnimateView.transform = CGAffineTransform.init(scaleX: 1, y: 1)
+            alertAnimateView?.transform = CGAffineTransform.init(scaleX: 1, y: 1)
             
         case .top:
             
-            alertAnimateView.transform = CGAffineTransform.init(translationX: 0, y: 0)
+            alertAnimateView?.transform = CGAffineTransform.init(translationX: 0, y: 0)
             
         case .bottom:
             
-            alertAnimateView.transform = CGAffineTransform.init(translationX: 0, y: 0)
+            alertAnimateView?.transform = CGAffineTransform.init(translationX: 0, y: 0)
         }
     }
     
@@ -139,21 +139,21 @@ public extension AlertAnimateProtocol {
      */
     func hide() {
         
-        alertAnimateAlphaView.alpha = 0
+        alertAnimateAlphaView?.alpha = 0
         
         switch alertAnimateType {
             
         case .scale:
             
-            alertAnimateView.transform = CGAffineTransform.init(scaleX: 0.000001, y: 0.000001)
+            alertAnimateView?.transform = CGAffineTransform.init(scaleX: 0.000001, y: 0.000001)
             
         case .top:
             
-            alertAnimateView.transform = CGAffineTransform.init(translationX: 0, y: -alertAnimateView.frame.size.height)
+            alertAnimateView?.transform = CGAffineTransform.init(translationX: 0, y: -(alertAnimateView?.frame.size.height ?? 0))
             
         case .bottom:
             
-            alertAnimateView.transform = CGAffineTransform.init(translationX: 0, y: alertAnimateView.frame.size.height)
+            alertAnimateView?.transform = CGAffineTransform.init(translationX: 0, y: alertAnimateView?.frame.size.height ?? 0)
         }
     }
 }
