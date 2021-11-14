@@ -27,7 +27,8 @@ let package = Package(
             dependencies: [],
             linkerSettings: [.linkedFramework("Foundation"),
                              .linkedFramework("UIKit"),
-                             .linkedFramework("WebKit")]),
+                             .linkedFramework("WebKit"),
+                             .linkedFramework("Photos")]),
         .testTarget(
             name: "ProtocolTests",
             dependencies: ["Protocol"]),
