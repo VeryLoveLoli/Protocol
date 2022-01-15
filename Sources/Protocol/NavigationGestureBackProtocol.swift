@@ -75,13 +75,30 @@ public extension NavigationGestureBackProtocol where Self : UINavigationControll
  */
 extension UIScrollView: UIGestureRecognizerDelegate {
     
+    /// 手势传递到下一层信息（可以在`deinit`时清除对应的信息）
+    public static var gestureToNextInfo: [String: Bool] = [:]
+    
+    /// 是否手势传递到下一层
+    open var isGestureToNext: Bool {
+        
+        get {
+            
+            Self.gestureToNextInfo[String(format: "%p", self)] ?? false
+        }
+        
+        set {
+            
+            Self.gestureToNextInfo[String(format: "%p", self)] = newValue
+        }
+    }
+    
     // MARK: - UIGestureRecognizerDelegate
     
     /**
      手势是否传递到下一层
      */
-    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         
-        return true
+        return isGestureToNext
     }
 }
