@@ -62,7 +62,7 @@ public extension XIBProtocol {
      - parameter    bundle:         Bundle包
      - parameter    index:          视图位置
      */
-    static func xib(name: String, bundle: Bundle? = nil, index: Int = 0) -> Self {
+    static func xib(name: String, bundle: Bundle? = Protocol.bundle, index: Int = 0) -> Self {
         
         let v = UINib.init(nibName: name, bundle: bundle).instantiate(withOwner: nil, options: nil)[index]
         defaultSetting(v)
@@ -74,7 +74,7 @@ public extension XIBProtocol {
      
      - parameter    bundle:         Bundle包
      */
-    static func nib(_ bundle: Bundle? = nil) -> UINib {
+    static func nib(_ bundle: Bundle? = Protocol.bundle) -> UINib {
         
         return UINib.init(nibName: "\(Self.self)", bundle: bundle)
     }

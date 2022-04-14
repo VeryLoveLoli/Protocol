@@ -16,6 +16,19 @@ import UIKit
 public protocol StoryboardProtocol {
     
     /**
+     故事板初始化根视图控制器，调用 storyboardRoot(_ name: String, bundle: Bundle?)
+     */
+    static func storyboardRoot() -> UIViewController?
+    
+    /**
+     故事板初始化根视图控制器
+     
+     - parameter    name:           故事板名称
+     - parameter    bundle:         Bundle包
+     */
+    static func storyboardRoot(_ name: String, bundle: Bundle?) -> UIViewController?
+
+    /**
      故事板初始化视图控制器，调用 storyboard(_ name: String,bundle:bundle?)
      */
     static func storyboard() -> Self
@@ -49,6 +62,25 @@ public protocol StoryboardProtocol {
 public extension StoryboardProtocol {
     
     /**
+     故事板初始化根视图控制器，调用 storyboardRoot(_ name: String, bundle: Bundle?)
+     */
+    static func storyboardRoot() -> UIViewController? {
+        
+        storyboardRoot("\(Self.self)")
+    }
+    
+    /**
+     故事板初始化根视图控制器
+     
+     - parameter    name:           故事板名称
+     - parameter    bundle:         Bundle包
+     */
+    static func storyboardRoot(_ name: String, bundle: Bundle? = Protocol.bundle) -> UIViewController? {
+        
+        UIStoryboard(name: "\(Self.self)", bundle: bundle).instantiateInitialViewController()
+    }
+    
+    /**
      故事板初始化视图控制器，调用 storyboard(_ name: String,bundle:bundle?)
      */
     static func storyboard() -> Self {
@@ -62,7 +94,7 @@ public extension StoryboardProtocol {
      - parameter    name:           故事板名称
      - parameter    bundle:         Bundle包
      */
-    static func storyboard(_ name: String, bundle: Bundle? = nil) -> Self {
+    static func storyboard(_ name: String, bundle: Bundle? = Protocol.bundle) -> Self {
         
         return storyboard(name, bundle: bundle, identifier: "\(Self.self)")
     }
@@ -74,7 +106,7 @@ public extension StoryboardProtocol {
      - parameter    bundle:         Bundle包
      - parameter    identifier:     视图控制器ID
      */
-    static func storyboard(_ name: String, bundle: Bundle? = nil, identifier: String) -> Self {
+    static func storyboard(_ name: String, bundle: Bundle? = Protocol.bundle, identifier: String) -> Self {
         
         let vc = UIStoryboard(name: name, bundle: bundle).instantiateViewController(withIdentifier: identifier)
         defaultSetting(vc)
