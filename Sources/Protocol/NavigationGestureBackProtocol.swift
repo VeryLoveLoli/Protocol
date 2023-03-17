@@ -78,10 +78,10 @@ extension UIScrollView: UIGestureRecognizerDelegate {
     /// 手势返回信息（可以在`deinit`时清除对应的信息）
     public static var gestureBackInfo: [String: Bool] = [:]
     /// 手势返回偏移量
-    public static var gestureBackOffset = CGPoint(x: 20, y: 20)
+    public static var gestureBackOffset = CGPoint(x: 30, y: 30)
     
     /// 是否手势返回
-    open var isGestureBack: Bool {
+    public var isGestureBack: Bool {
         
         get {
             
@@ -102,5 +102,13 @@ extension UIScrollView: UIGestureRecognizerDelegate {
     open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         
         return isGestureBack && gestureRecognizer.location(in: window).x <= UIScrollView.gestureBackOffset.x
+    }
+    
+    /**
+     是否可手势
+     */
+    open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        
+        return !(isGestureBack && touch.location(in: window).x <= UIScrollView.gestureBackOffset.x)
     }
 }
