@@ -105,10 +105,24 @@ extension UIScrollView: UIGestureRecognizerDelegate {
     }
     
     /**
-     是否可手势
+     是否可手势（在扩展中没有调用，下面的`event`可以；视图内重写`touch`也可以）
      */
     open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         
         return !(isGestureBack && touch.location(in: window).x <= UIScrollView.gestureBackOffset.x)
+    }
+    
+    /**
+     是否可手势
+     */
+    @available(iOS 13.4, *)
+    open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive event: UIEvent) -> Bool {
+        
+        if let touch = event.allTouches?.first {
+            
+            return !(isGestureBack && touch.location(in: window).x <= UIScrollView.gestureBackOffset.x)
+        }
+        
+        return true
     }
 }
