@@ -36,12 +36,12 @@ public protocol ImagePickerControllerProtocol: AnyObject {
      判断相机权限
      */
     @available(macCatalyst 14.0, *)
-    func imagePickerControllerCameraPermissions() -> Bool
+    func imagePickerControllerCameraPermissions(_ handler: @escaping (_ bool: Bool) -> Void)
     
     /**
      判断相册权限
      */
-    func imagePickerControllerPhotoLibraryPermissions() -> Bool
+    func imagePickerControllerPhotoLibraryPermissions(_ handler: @escaping (_ bool: Bool) -> Void)
     
     /**
      提示设置权限
@@ -122,28 +122,34 @@ public extension ImagePickerControllerProtocol where Self: UIViewController {
         
         if #available(macCatalyst 14, *) {
             
-            alert.addAction(UIAlertAction.init(title: "拍照", style: .default, handler: { (action) in
+            alert.addAction(UIAlertAction.init(title: "拍照", style: .default, handler: { [weak self] (action) in
                 
-                if self.imagePickerControllerCameraPermissions() {
+                self?.imagePickerControllerCameraPermissions { bool in
                     
-                    self.imagePickerControllerOpen(.camera, isEditing: isEditing, isImage: isImage)
-                }
-                else {
-                    
-                    self.imagePickerControllerAlertPermissions(.camera)
+                    if bool {
+                        
+                        self?.imagePickerControllerOpen(.camera, isEditing: isEditing, isImage: isImage)
+                    }
+                    else {
+                        
+                        self?.imagePickerControllerAlertPermissions(.camera)
+                    }
                 }
             }))
         }
         
-        alert.addAction(UIAlertAction.init(title: "选择相册", style: .default, handler: { (action) in
+        alert.addAction(UIAlertAction.init(title: "选择相册", style: .default, handler: { [weak self] (action) in
             
-            if self.imagePickerControllerPhotoLibraryPermissions() {
+            self?.imagePickerControllerPhotoLibraryPermissions { bool in
                 
-                self.imagePickerControllerOpen(.photoLibrary, isEditing: isEditing, isImage: isImage)
-            }
-            else {
-                
-                self.imagePickerControllerAlertPermissions(.photoLibrary)
+                if bool {
+                    
+                    self?.imagePickerControllerOpen(.photoLibrary, isEditing: isEditing, isImage: isImage)
+                }
+                else {
+                    
+                    self?.imagePickerControllerAlertPermissions(.photoLibrary)
+                }
             }
         }))
         
@@ -154,51 +160,57 @@ public extension ImagePickerControllerProtocol where Self: UIViewController {
      判断相机权限
      */
     @available(macCatalyst 14.0, *)
-    func imagePickerControllerCameraPermissions() -> Bool {
+    func imagePickerControllerCameraPermissions(_ handler: @escaping (_ bool: Bool) -> Void) {
         
         /// 判断权限
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined:
-            let semaphore = DispatchSemaphore(value: 0)
-            var isPermissions = false
+            let isMain = Thread.current == Thread.main
             /// 请求权限
             AVCaptureDevice.requestAccess(for: .video) { (bool) in
-                isPermissions = bool
-                semaphore.signal()
+                if isMain {
+                    DispatchQueue.main.async {
+                        handler(bool)
+                    }
+                }
+                else {
+                    handler(bool)
+                }
             }
-            semaphore.wait()
-            return isPermissions
         case .restricted:
-            return false
+            handler(false)
         case .denied:
-            return false
+            handler(false)
         case .authorized:
-            return true
+            handler(true)
         @unknown default:
-            return false
+            handler(false)
         }
     }
     
     /**
      判断相册权限
      */
-    func imagePickerControllerPhotoLibraryPermissions() -> Bool {
+    func imagePickerControllerPhotoLibraryPermissions(_ handler: @escaping (_ bool: Bool) -> Void) {
         
         switch PHPhotoLibrary.authorizationStatus() {
         case .notDetermined:
-            let semaphore = DispatchSemaphore(value: 0)
-            var isPermissions = false
+            let isMain = Thread.current == Thread.main
             /// 请求权限
             PHPhotoLibrary.requestAuthorization { (status) in
-                isPermissions = status == .authorized
-                semaphore.signal()
+                if isMain {
+                    DispatchQueue.main.async {
+                        handler(status == .authorized)
+                    }
+                }
+                else {
+                    handler(status == .authorized)
+                }
             }
-            semaphore.wait()
-            return isPermissions
         case .authorized:
-            return true
+            handler(true)
         default:
-            return false
+            handler(false)
         }
     }
     
